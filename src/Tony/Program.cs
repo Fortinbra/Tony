@@ -19,6 +19,7 @@ namespace Tony
             builder.Services.AddSwaggerGen();
             builder.Services.RegisterMongoDB(builder.Configuration);
             builder.Services.AddRepositories();
+            builder.Services.AddServices();
             builder.Services.AddDiscordBot(builder.Configuration);
             var app = builder.Build();
 

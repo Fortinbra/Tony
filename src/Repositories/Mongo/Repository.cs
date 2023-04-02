@@ -47,7 +47,7 @@ namespace Repositories.Mongo
             throw new NotImplementedException();
         }
 
-        public Task<(bool Success, int Count)> DeleteAsync(Expression<T> query)
+        public Task<(bool Success, int Count)> DeleteAsync(Expression<Func<T, bool>> query)
         {
             throw new NotImplementedException();
         }
@@ -57,14 +57,15 @@ namespace Repositories.Mongo
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<T>> GetAsync()
+        public async Task<IEnumerable<T>> GetAsync()
         {
-            throw new NotImplementedException();
+
+            return await _collection.Find(_ => true).ToListAsync();
         }
 
-        public Task<IEnumerable<T>> GetAsync(Expression<T> query, Expression<T> projection)
+        public async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> query)
         {
-            throw new NotImplementedException();
+            return await _collection.Find(query).ToListAsync();
         }
 
         public Task<T> UpdateAsync(T entity)

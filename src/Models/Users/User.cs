@@ -11,8 +11,30 @@ namespace Models.Users
     public class User : Base
     {
         public User() { }
+        public User(IGuildUser user)
+        {
+            DiscordId = user.Id;
+            AvatarId = user.AvatarId;
+            DiscriminatorValue = user.DiscriminatorValue;
+            IsBot = user.IsBot;
+            IsWebhook = user.IsWebhook;
+            Username = user.Username;
+            PublicFlags = user.PublicFlags;
+            JoinedAt = user.JoinedAt;
+            DisplayName = user.DisplayName;
+            Nickname = user.Nickname;
+            DisplayAvatarId = user.DisplayAvatarId;
+            GuildAvatarId = user.GuildAvatarId;
+            GuildId = user.GuildId;
+            PremiumSince = user.PremiumSince;
+            RoleIds = user.RoleIds.ToList();
+            IsPending = user.IsPending;
+            Hierarchy = user.Hierarchy;
+            TimedOutUntil = user.TimedOutUntil;
+            Flags = user.Flags;
+        }
+        public ulong DiscordId { get; set; }
         public string AvatarId { get; set; }
-        public string Discriminator { get; set; }
         public ushort DiscriminatorValue { get; set; }
         public bool IsBot { get; set; }
         public bool IsWebhook { get; set; }

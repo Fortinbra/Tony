@@ -1,6 +1,14 @@
-﻿namespace Tony.ServiceExtensions
+﻿using Abstractions.Services;
+using Services.API;
+using System.Runtime.CompilerServices;
+
+namespace Tony.ServiceExtensions
 {
-    public class ServicesExtensions
+    public static class ServicesExtensions
     {
+        public static void AddServices(this IServiceCollection services)
+        {
+            services.AddTransient<IUserService, UserService>();
+        }
     }
 }

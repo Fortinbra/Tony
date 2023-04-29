@@ -1,4 +1,5 @@
 ﻿using Abstractions.Repositories;
+using Models.GitHub;
 using Models.Users;
 using MongoDB.Driver;
 using Repositories.Mongo;
@@ -15,6 +16,7 @@ namespace Tony.ServiceExtensions
         public static void AddRepositories(this IServiceCollection services)
         {
             services.AddTransient<IRepository<User>, Repository<User>>();
+            services.AddTransient<IRepository<Root>, Repository<Root>>();
         }
     }
 }

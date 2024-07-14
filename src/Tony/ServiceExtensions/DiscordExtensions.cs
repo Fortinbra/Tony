@@ -27,7 +27,7 @@ namespace Tony.ServiceExtensions
             };
             services.AddSingleton(servConfig);
             services.AddSingleton<InteractionService>();
-
+            services.AddSingleton<Yeet>();
             services.AddSingleton<Bite>();
         }
     }

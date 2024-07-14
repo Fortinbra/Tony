@@ -1,5 +1,4 @@
 #nullable disable
-using Discord;
 using Tony.ServiceExtensions;
 
 namespace Tony

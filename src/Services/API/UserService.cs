@@ -28,9 +28,17 @@ namespace Services.API
             return _repository.GetAsync(id);
         }
 
-        public async Task<User> GetUser(ulong id)
+        public async Task<User?> GetUser(ulong id)
         {
-            return (await _repository.GetAsync(x => x.DiscordId == id)).FirstOrDefault();
+            var user = (await _repository.GetAsync(x => x.DiscordId == id)).FirstOrDefault();
+            if (user is not null)
+            {
+                return user;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public async Task<IEnumerable<User>> GetUsers()

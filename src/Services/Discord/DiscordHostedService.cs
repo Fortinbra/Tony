@@ -37,14 +37,22 @@ namespace Services.Discord
             };
             _client.Ready += async () =>
             {
-                await Task.CompletedTask;
-                Console.WriteLine("Ready!");
-                await _interactionService.AddModulesAsync(Assembly.GetExecutingAssembly(), _serviceProvider);
+                try
+                {
+                    await Task.CompletedTask;
+                    Console.WriteLine("Ready!");
+                    var modules = await _interactionService.AddModulesAsync(Assembly.GetExecutingAssembly(), _serviceProvider);
+                    await _interactionService.AddModulesToGuildAsync(1049366310389289001, true, modules.ToArray());
 #if DEBUG
-                await _interactionService.RegisterCommandsToGuildAsync(1049366310389289001);
+                    await _interactionService.RegisterCommandsToGuildAsync(1049366310389289001, deleteMissing: true);
 #else
-                await _interactionService.RegisterCommandsGloballyAsync();
+                    await _interactionService.RegisterCommandsGloballyAsync(true);
 #endif
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
             };
             _client.InteractionCreated += async (x) =>
             {

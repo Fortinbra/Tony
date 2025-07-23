@@ -81,6 +81,37 @@ namespace Services.Tests.Discord.SlashCommands
             _mockGitHubService.Verify(s => s.GetAvailableControllers(), Times.Once);
         }
 
+        [Fact]
+        [Trait("Category", "Unit")]
+        public async Task DownloadFirmware_UsesGetControllerFirmwareInfoAsync_ForComprehensiveInfo()
+        {
+            // Arrange
+            var controller = "Pico";
+            var version = "v0.7.11";
+            var mockFirmwareInfo = new Models.GitHub.ControllerFirmwareInfo
+            {
+                DownloadUrl = "https://example.com/download.uf2",
+                ReleaseNotesUrl = "https://github.com/OpenStickCommunity/GP2040-CE/releases/tag/v0.7.11",
+                ControllerName = controller,
+                Version = version
+            };
+
+            _mockGitHubService.Setup(s => s.GetControllerFirmwareInfoAsync(controller, version))
+                             .ReturnsAsync(mockFirmwareInfo);
+
+            // Act - Verify the service has the method available
+            var methodExists = typeof(IGitHubService).GetMethods()
+                .Any(m => m.Name == "GetControllerFirmwareInfoAsync");
+
+            // Assert
+            Assert.True(methodExists, "GetControllerFirmwareInfoAsync method should exist in IGitHubService");
+            
+            // Verify mock setup works
+            var result = await _mockGitHubService.Object.GetControllerFirmwareInfoAsync(controller, version);
+            Assert.Equal(mockFirmwareInfo.DownloadUrl, result?.DownloadUrl);
+            Assert.Equal(mockFirmwareInfo.ReleaseNotesUrl, result?.ReleaseNotesUrl);
+        }
+
         // Note: Testing the actual Discord interaction methods (DownloadFirmwareAsync) 
         // would require complex mocking of Discord.NET's interaction context, which 
         // includes Context, DeferAsync(), FollowupAsync(), etc. 

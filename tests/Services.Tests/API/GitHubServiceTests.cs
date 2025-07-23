@@ -276,5 +276,94 @@ namespace Services.Tests.API
             Assert.Contains(_httpClient.DefaultRequestHeaders.UserAgent, 
                 header => header.ToString().Contains("Tony-Bot/1.0"));
         }
+
+        [Fact]
+        [Trait("Category", "Unit")]
+        public async Task GetControllerFirmwareInfoAsync_WithValidController_ReturnsDownloadUrlAndReleaseNotesUrl()
+        {
+            // Arrange
+            var controllerName = "Pico";
+            var tag = "v0.7.11";
+            var versionNumber = "0.7.11";
+            var expectedDownloadUrl = $"https://github.com/OpenStickCommunity/GP2040-CE/releases/download/{tag}/GP2040-CE_{versionNumber}_{controllerName}.uf2";
+            var expectedReleaseNotesUrl = $"https://github.com/OpenStickCommunity/GP2040-CE/releases/tag/{tag}";
+
+            var mockRelease = new GitHubRelease
+            {
+                HtmlUrl = expectedReleaseNotesUrl,
+                Assets = new List<GitHubReleaseAsset>
+                {
+                    new() 
+                    { 
+                        Name = $"GP2040-CE_{versionNumber}_{controllerName}.uf2",
+                        BrowserDownloadUrl = expectedDownloadUrl
+                    }
+                }
+            };
+
+            var jsonContent = JsonSerializer.Serialize(mockRelease);
+            var httpResponse = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(jsonContent)
+            };
+
+            _mockHttpMessageHandler
+                .Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.IsAny<HttpRequestMessage>(),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(httpResponse);
+
+            // Act
+            var result = await _gitHubService.GetControllerFirmwareInfoAsync(controllerName, tag);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(expectedDownloadUrl, result.DownloadUrl);
+            Assert.Equal(expectedReleaseNotesUrl, result.ReleaseNotesUrl);
+        }
+
+        [Fact]
+        [Trait("Category", "Unit")]
+        public async Task GetControllerFirmwareInfoAsync_WithInvalidController_ReturnsNull()
+        {
+            // Arrange
+            var controllerName = "InvalidController";
+            var tag = "v0.7.11";
+
+            var mockRelease = new GitHubRelease
+            {
+                HtmlUrl = "https://github.com/OpenStickCommunity/GP2040-CE/releases/tag/v0.7.11",
+                Assets = new List<GitHubReleaseAsset>
+                {
+                    new() 
+                    { 
+                        Name = "GP2040-CE_0.7.11_Pico.uf2",
+                        BrowserDownloadUrl = "https://example.com/file.uf2"
+                    }
+                }
+            };
+
+            var jsonContent = JsonSerializer.Serialize(mockRelease);
+            var httpResponse = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(jsonContent)
+            };
+
+            _mockHttpMessageHandler
+                .Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.IsAny<HttpRequestMessage>(),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(httpResponse);
+
+            // Act
+            var result = await _gitHubService.GetControllerFirmwareInfoAsync(controllerName, tag);
+
+            // Assert
+            Assert.Null(result);
+        }
     }
 }

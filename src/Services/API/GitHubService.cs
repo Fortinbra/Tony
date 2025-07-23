@@ -126,6 +126,61 @@ namespace Services.API
             }
         }
 
+        public async Task<ControllerFirmwareInfo?> GetControllerFirmwareInfoAsync(string controllerName, string tag = "v0.7.11")
+        {
+            try
+            {
+                _logger.LogInformation("Fetching firmware info for controller: {ControllerName} with tag: {Tag}", controllerName, tag);
+
+                var url = string.Format(GitHubApiUrl, tag);
+                var response = await _httpClient.GetAsync(url);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning("Failed to fetch GitHub release. Status: {StatusCode}", response.StatusCode);
+                    return null;
+                }
+
+                var content = await response.Content.ReadAsStringAsync();
+                var release = JsonSerializer.Deserialize<GitHubRelease>(content);
+
+                if (release?.Assets == null)
+                {
+                    _logger.LogWarning("No assets found in GitHub release for tag: {Tag}", tag);
+                    return null;
+                }
+
+                // Look for the UF2 file for the specified controller
+                // Remove the 'v' prefix from tag to match the actual filename format
+                var versionNumber = tag.StartsWith("v", StringComparison.OrdinalIgnoreCase) ? tag[1..] : tag;
+                var expectedFileName = $"GP2040-CE_{versionNumber}_{controllerName}.uf2";
+                var asset = release.Assets.FirstOrDefault(a => 
+                    string.Equals(a.Name, expectedFileName, StringComparison.OrdinalIgnoreCase));
+
+                if (asset == null)
+                {
+                    _logger.LogWarning("UF2 file not found for controller: {ControllerName}. Expected filename: {ExpectedFileName}", 
+                        controllerName, expectedFileName);
+                    return null;
+                }
+
+                _logger.LogInformation("Found UF2 file for {ControllerName}: {FileName}", controllerName, asset.Name);
+                
+                return new ControllerFirmwareInfo
+                {
+                    DownloadUrl = asset.BrowserDownloadUrl,
+                    ReleaseNotesUrl = release.HtmlUrl,
+                    ControllerName = controllerName,
+                    Version = tag
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching firmware info for controller: {ControllerName}", controllerName);
+                return null;
+            }
+        }
+
         public IReadOnlyList<string> GetAvailableControllers()
         {
             return _availableControllers;

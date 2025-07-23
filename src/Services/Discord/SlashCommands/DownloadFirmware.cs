@@ -45,10 +45,10 @@ namespace Services.Discord.SlashCommands
                     return;
                 }
 
-                // Get the download URL
-                var downloadUrl = await _gitHubService.GetControllerUF2UrlAsync(controller, version);
+                // Get the firmware information (download URL and release notes URL)
+                var firmwareInfo = await _gitHubService.GetControllerFirmwareInfoAsync(controller, version);
 
-                if (string.IsNullOrEmpty(downloadUrl))
+                if (firmwareInfo == null)
                 {
                     await FollowupAsync(embed: new EmbedBuilder()
                         .WithTitle("❌ File Not Found")
@@ -58,13 +58,14 @@ namespace Services.Discord.SlashCommands
                     return;
                 }
 
-                // Create success embed with download information
+                // Create success embed with download information and release notes
                 var embed = new EmbedBuilder()
                     .WithTitle("🎮 Controller Firmware Download")
                     .WithDescription($"**Controller:** {controller}\n**Version:** {version}")
                     .WithColor(Color.Green)
                     .WithThumbnailUrl("https://raw.githubusercontent.com/OpenStickCommunity/GP2040-CE/main/docs/assets/images/gp2040-ce-logo.png")
-                    .AddField("📥 Download Link", $"[Click here to download the UF2 file]({downloadUrl})", false)
+                    .AddField("📥 Download Link", $"[Click here to download the UF2 file]({firmwareInfo.DownloadUrl})", false)
+                    .AddField("📄 Release Notes", $"[View release notes and changelog]({firmwareInfo.ReleaseNotesUrl})", false)
                     .AddField("📋 Installation Instructions", 
                         "1. Hold the BOOTSEL button while connecting your controller to your computer\n" +
                         "2. Your controller should appear as a USB drive\n" +

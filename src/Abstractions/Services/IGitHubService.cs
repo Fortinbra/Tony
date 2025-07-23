@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Models.GitHub;
 
 namespace Abstractions.Services
 {
@@ -16,6 +17,14 @@ namespace Abstractions.Services
         /// <param name="tag">The release tag (default: v0.7.11)</param>
         /// <returns>The download URL for the UF2 file, or null if not found</returns>
         Task<string?> GetControllerUF2UrlAsync(string controllerName, string tag = "v0.7.11");
+
+        /// <summary>
+        /// Gets comprehensive firmware information including download URL and release notes URL
+        /// </summary>
+        /// <param name="controllerName">The name of the controller</param>
+        /// <param name="tag">The release tag (default: v0.7.11)</param>
+        /// <returns>Controller firmware information, or null if not found</returns>
+        Task<ControllerFirmwareInfo?> GetControllerFirmwareInfoAsync(string controllerName, string tag = "v0.7.11");
 
         /// <summary>
         /// Gets all available controller names for GP2040-CE

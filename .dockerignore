@@ -1,0 +1,78 @@
+# Docker ignore file for Tony Bot
+# Ignore unnecessary files during Docker build
+
+# .NET build artifacts
+**/bin/
+**/obj/
+**/out/
+
+# Dependency directories
+**/packages/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio files
+.vs/
+.vscode/
+
+# User secrets and environment files
+**/.env
+**/appsettings.local.json
+**/secrets.json
+
+# Docker files
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Git files
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+README*
+
+# Test files
+**/TestResults/
+
+# Coverage reports
+**/*coverage*
+
+# Temporary files
+*.tmp
+*.temp
+
+# Scripts (not needed in container)
+scripts/
+
+# Sample files
+sample.json
+
+# MongoDB data
+mongodb-data/
+
+# Log files
+logs/
+*.log

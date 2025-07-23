@@ -1,0 +1,62 @@
+# Docker Compose for Development - Raspberry Pi
+version: '3.8'
+
+services:
+  tony-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILD_CONFIGURATION: Debug
+    container_name: tony-bot-dev
+    restart: unless-stopped
+    ports:
+      - "5000:8080"
+      - "5001:8081"
+    environment:
+      # MongoDB Configuration
+      - MongoDB__ConnectionString=mongodb://mongodb:27017
+      - MongoDB__DatabaseName=TonyBotDev
+      
+      # Discord Configuration (set these in .env file)
+      - Discord__Token=${DISCORD_TOKEN}
+      - Discord__GuildId=${DISCORD_GUILD_ID}
+      
+      # ASP.NET Core Configuration
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      
+      # Logging Configuration
+      - Logging__LogLevel__Default=Debug
+      - Logging__LogLevel__Microsoft=Information
+    
+    depends_on:
+      - mongodb
+    
+    networks:
+      - tony-dev-network
+    
+    volumes:
+      - ./logs:/app/logs
+      - ./src:/app/src # For development file watching (if needed)
+
+  mongodb:
+    image: mongo:7-jammy
+    container_name: tony-mongodb-dev
+    restart: unless-stopped
+    ports:
+      - "27018:27017" # Different port to avoid conflicts
+    environment:
+      - MONGO_INITDB_DATABASE=TonyBotDev
+    volumes:
+      - mongodb_dev_data:/data/db
+    networks:
+      - tony-dev-network
+
+networks:
+  tony-dev-network:
+    driver: bridge
+
+volumes:
+  mongodb_dev_data:
+    driver: local

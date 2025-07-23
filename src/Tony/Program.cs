@@ -2,6 +2,7 @@
 using Discord;
 using Tony.ServiceExtensions;
 using Scalar.AspNetCore;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace Tony
 {
@@ -14,6 +15,16 @@ namespace Tony
 
             // Add services to the container.
             builder.Configuration.AddEnvironmentVariables();
+            
+            // Configure forwarded headers for Docker/reverse proxy scenarios
+            builder.Services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor 
+                    | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
+                options.KnownNetworks.Clear();
+                options.KnownProxies.Clear();
+            });
+            
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI with Scalar at https://github.com/scalar/scalar
             builder.Services.AddEndpointsApiExplorer();
@@ -35,6 +46,9 @@ namespace Tony
                 app.MapOpenApi();
                 app.MapScalarApiReference();
             }
+
+            // Configure forwarded headers for reverse proxy scenarios (like Docker)
+            app.UseForwardedHeaders();
 
             //app.UseHttpsRedirection();
 

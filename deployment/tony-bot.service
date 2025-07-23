@@ -1,0 +1,16 @@
+[Unit]
+Description=Tony Discord Bot
+Documentation=https://github.com/Fortinbra/Tony
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/home/pi/tony-bot
+ExecStart=/usr/bin/docker-compose up -d
+ExecStop=/usr/bin/docker-compose down
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target

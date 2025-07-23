@@ -19,7 +19,7 @@ namespace Services.Discord.SlashCommands
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        [SlashCommand("download-controller", "Download a UF2 firmware file for a GP2040-CE compatible controller")]
+        [SlashCommand("download-firmware", "Download a UF2 firmware file for a GP2040-CE compatible controller")]
         public async Task DownloadControllerAsync(
             [Summary("controller", "Select the controller type"), Autocomplete(typeof(ControllerAutocompleteHandler))] 
             string controller,

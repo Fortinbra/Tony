@@ -56,7 +56,7 @@ namespace Services.Tests.Discord.SlashCommands
 
             // Assert
             Assert.NotNull(attribute);
-            Assert.Equal("download-controller", attribute.Name);
+            Assert.Equal("download-firmware", attribute.Name);
             Assert.Contains("Download a UF2 firmware file", attribute.Description);
         }
 

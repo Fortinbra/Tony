@@ -20,7 +20,6 @@ namespace Services.API
             "Blank",
             "Pico",
             "PicoW",
-            "Pico2",
             "BentoBox",
             "DuelPadZen",
             "FlatboxRev4",

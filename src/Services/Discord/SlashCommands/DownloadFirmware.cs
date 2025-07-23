@@ -8,20 +8,20 @@ namespace Services.Discord.SlashCommands
     /// <summary>
     /// Slash command for downloading GP2040-CE controller firmware files
     /// </summary>
-    public class DownloadController : InteractionModuleBase
+    public class DownloadFirmware : InteractionModuleBase
     {
         private readonly IGitHubService _gitHubService;
-        private readonly ILogger<DownloadController> _logger;
+        private readonly ILogger<DownloadFirmware> _logger;
 
-        public DownloadController(IGitHubService gitHubService, ILogger<DownloadController> logger)
+        public DownloadFirmware(IGitHubService gitHubService, ILogger<DownloadFirmware> logger)
         {
             _gitHubService = gitHubService ?? throw new ArgumentNullException(nameof(gitHubService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [SlashCommand("download-firmware", "Download a UF2 firmware file for a GP2040-CE compatible controller")]
-        public async Task DownloadControllerAsync(
-            [Summary("controller", "Select the controller type"), Autocomplete(typeof(ControllerAutocompleteHandler))] 
+        public async Task DownloadFirmwareAsync(
+            [Summary("controller", "Select the controller type"), Autocomplete(typeof(FirmwareControllerAutocompleteHandler))] 
             string controller,
             [Summary("version", "Firmware version (default: v0.7.11)")] 
             string version = "v0.7.11")
@@ -94,13 +94,13 @@ namespace Services.Discord.SlashCommands
     }
 
     /// <summary>
-    /// Autocomplete handler for controller selection
+    /// Autocomplete handler for firmware controller selection
     /// </summary>
-    public class ControllerAutocompleteHandler : AutocompleteHandler
+    public class FirmwareControllerAutocompleteHandler : AutocompleteHandler
     {
         private readonly IGitHubService _gitHubService;
 
-        public ControllerAutocompleteHandler(IGitHubService gitHubService)
+        public FirmwareControllerAutocompleteHandler(IGitHubService gitHubService)
         {
             _gitHubService = gitHubService ?? throw new ArgumentNullException(nameof(gitHubService));
         }

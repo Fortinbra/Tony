@@ -8,24 +8,24 @@ using Xunit;
 
 namespace Services.Tests.Discord.SlashCommands
 {
-    public class DownloadControllerTests
+    public class DownloadFirmwareTests
     {
         private readonly Mock<IGitHubService> _mockGitHubService;
-        private readonly Mock<ILogger<DownloadController>> _mockLogger;
-        private readonly DownloadController _downloadController;
+        private readonly Mock<ILogger<DownloadFirmware>> _mockLogger;
+        private readonly DownloadFirmware _downloadFirmware;
 
-        public DownloadControllerTests()
+        public DownloadFirmwareTests()
         {
             _mockGitHubService = new Mock<IGitHubService>();
-            _mockLogger = new Mock<ILogger<DownloadController>>();
-            _downloadController = new DownloadController(_mockGitHubService.Object, _mockLogger.Object);
+            _mockLogger = new Mock<ILogger<DownloadFirmware>>();
+            _downloadFirmware = new DownloadFirmware(_mockGitHubService.Object, _mockLogger.Object);
         }
 
         [Fact]
         public void Constructor_WithValidDependencies_InitializesSuccessfully()
         {
             // Act & Assert
-            Assert.NotNull(_downloadController);
+            Assert.NotNull(_downloadFirmware);
         }
 
         [Fact]
@@ -33,7 +33,7 @@ namespace Services.Tests.Discord.SlashCommands
         {
             // Act & Assert
             Assert.Throws<ArgumentNullException>(() => 
-                new DownloadController(null!, _mockLogger.Object));
+                new DownloadFirmware(null!, _mockLogger.Object));
         }
 
         [Fact]
@@ -41,14 +41,14 @@ namespace Services.Tests.Discord.SlashCommands
         {
             // Act & Assert
             Assert.Throws<ArgumentNullException>(() => 
-                new DownloadController(_mockGitHubService.Object, null!));
+                new DownloadFirmware(_mockGitHubService.Object, null!));
         }
 
         [Fact]
-        public void DownloadControllerCommand_HasCorrectSlashCommandAttribute()
+        public void DownloadFirmwareCommand_HasCorrectSlashCommandAttribute()
         {
             // Arrange
-            var method = typeof(DownloadController).GetMethod(nameof(DownloadController.DownloadControllerAsync));
+            var method = typeof(DownloadFirmware).GetMethod(nameof(DownloadFirmware.DownloadFirmwareAsync));
 
             // Act
             var attribute = method?.GetCustomAttributes(typeof(SlashCommandAttribute), false)
@@ -76,7 +76,7 @@ namespace Services.Tests.Discord.SlashCommands
             _mockGitHubService.Verify(s => s.GetAvailableControllers(), Times.Once);
         }
 
-        // Note: Testing the actual Discord interaction methods (DownloadControllerAsync) 
+        // Note: Testing the actual Discord interaction methods (DownloadFirmwareAsync) 
         // would require complex mocking of Discord.NET's interaction context, which 
         // includes Context, DeferAsync(), FollowupAsync(), etc. 
         // 
@@ -86,15 +86,15 @@ namespace Services.Tests.Discord.SlashCommands
         // Integration tests would be more valuable for testing the complete slash command flow.
     }
 
-    public class ControllerAutocompleteHandlerTests
+    public class FirmwareControllerAutocompleteHandlerTests
     {
         private readonly Mock<IGitHubService> _mockGitHubService;
-        private readonly ControllerAutocompleteHandler _autocompleteHandler;
+        private readonly FirmwareControllerAutocompleteHandler _autocompleteHandler;
 
-        public ControllerAutocompleteHandlerTests()
+        public FirmwareControllerAutocompleteHandlerTests()
         {
             _mockGitHubService = new Mock<IGitHubService>();
-            _autocompleteHandler = new ControllerAutocompleteHandler(_mockGitHubService.Object);
+            _autocompleteHandler = new FirmwareControllerAutocompleteHandler(_mockGitHubService.Object);
         }
 
         [Fact]
@@ -109,7 +109,7 @@ namespace Services.Tests.Discord.SlashCommands
         {
             // Act & Assert
             Assert.Throws<ArgumentNullException>(() => 
-                new ControllerAutocompleteHandler(null!));
+                new FirmwareControllerAutocompleteHandler(null!));
         }
     }
 }

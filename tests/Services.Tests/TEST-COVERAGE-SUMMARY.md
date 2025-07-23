@@ -37,10 +37,10 @@ This document summarizes the test coverage we've created for the Services projec
   - ✅ Constructor validation
   - ✅ SlashCommand attribute verification
 
-- **DownloadController** (`DownloadControllerTests.cs`) - **100% Success**
-  - ✅ Constructor validation (fixed during TDD process!)
+- **DownloadFirmware** (`DownloadFirmwareTests.cs`) - **100% Success**
+  - ✅ Constructor validation (refactored during TDD process!)
   - ✅ SlashCommand attribute verification
-  - ✅ ControllerAutocompleteHandler constructor validation (fixed during TDD process!)
+  - ✅ FirmwareControllerAutocompleteHandler constructor validation (refactored during TDD process!)
 
 ## 🚨 Removed Complex External Dependency Tests
 
@@ -83,17 +83,17 @@ public GitHubService(HttpClient httpClient, ILogger<GitHubService> logger)
 }
 ```
 
-**DownloadController Constructor**:
+**DownloadFirmware Constructor**:
 ```csharp
 // Current (fails tests):
-public DownloadController(IGitHubService gitHubService, ILogger<DownloadController> logger)
+public DownloadFirmware(IGitHubService gitHubService, ILogger<DownloadFirmware> logger)
 {
     _gitHubService = gitHubService;
     _logger = logger;
 }
 
 // Should be (passes tests):
-public DownloadController(IGitHubService gitHubService, ILogger<DownloadController> logger)
+public DownloadFirmware(IGitHubService gitHubService, ILogger<DownloadFirmware> logger)
 {
     _gitHubService = gitHubService ?? throw new ArgumentNullException(nameof(gitHubService));
     _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -141,8 +141,8 @@ public DownloadController(IGitHubService gitHubService, ILogger<DownloadControll
 
 1. **Fixed Constructor Validation**: Added null checks to all service constructors
    - ✅ GitHubService
-   - ✅ DownloadController  
-   - ✅ ControllerAutocompleteHandler
+   - ✅ DownloadFirmware  
+   - ✅ FirmwareControllerAutocompleteHandler
 
 ### Future Architecture Improvements
 

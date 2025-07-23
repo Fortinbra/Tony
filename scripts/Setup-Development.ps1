@@ -36,6 +36,29 @@ try {
         Write-Warning "User secrets initialization failed or already exists"
     }
 
+    # Configure user secrets with default values if they don't exist
+    Write-Host "Configuring user secrets..." -ForegroundColor Yellow
+    $secrets = @{
+        "Discord:Token" = "YOUR_DISCORD_BOT_TOKEN_HERE"
+        "Discord:GuildId" = "YOUR_GUILD_ID_HERE"
+        "MongoDB:ConnectionString" = "mongodb://localhost:27017"
+        "MongoDB:DatabaseName" = "TonyBot"
+    }
+
+    foreach ($secret in $secrets.GetEnumerator()) {
+        $existingValue = dotnet user-secrets get $secret.Key --project $ProjectPath 2>$null
+        if (-not $existingValue -or $Force) {
+            dotnet user-secrets set $secret.Key $secret.Value --project $ProjectPath | Out-Null
+            if ($secret.Value -like "*YOUR_*") {
+                Write-Host "⚠ Set placeholder for $($secret.Key) - please update with actual value" -ForegroundColor Yellow
+            } else {
+                Write-Host "✓ Set $($secret.Key)" -ForegroundColor Green
+            }
+        } else {
+            Write-Host "✓ $($secret.Key) already configured" -ForegroundColor Green
+        }
+    }
+
     # Check if MongoDB is accessible (optional)
     Write-Host "Checking MongoDB connection..." -ForegroundColor Yellow
     try {
@@ -79,10 +102,18 @@ try {
     Write-Host "Development environment setup completed!" -ForegroundColor Green
     Write-Host ""
     Write-Host "Next steps:" -ForegroundColor Cyan
-    Write-Host "1. Configure your Discord bot token in user secrets or appsettings" -ForegroundColor White
-    Write-Host "2. Ensure MongoDB is running" -ForegroundColor White
-    Write-Host "3. Run the application with: dotnet run --project src/Tony/Tony.csproj" -ForegroundColor White
-    Write-Host "4. Access API documentation at: https://localhost:5001/scalar/v1" -ForegroundColor White
+    Write-Host "1. Update your Discord bot token in user secrets:" -ForegroundColor White
+    Write-Host "   dotnet user-secrets set 'Discord:Token' 'your-actual-bot-token'" -ForegroundColor Gray
+    Write-Host "2. Update your Discord guild ID in user secrets:" -ForegroundColor White
+    Write-Host "   dotnet user-secrets set 'Discord:GuildId' 'your-guild-id'" -ForegroundColor Gray
+    Write-Host "3. Ensure MongoDB is running on localhost:27017" -ForegroundColor White
+    Write-Host "4. Run the application with: dotnet run --project src/Tony/Tony.csproj" -ForegroundColor White
+    Write-Host "5. Access API documentation at: https://localhost:5001/scalar/v1" -ForegroundColor White
+    Write-Host "6. Check health status at: https://localhost:5001/health" -ForegroundColor White
+    Write-Host ""
+    Write-Host "Useful commands:" -ForegroundColor Cyan
+    Write-Host "• List user secrets: dotnet user-secrets list --project src/Tony/Tony.csproj" -ForegroundColor Gray
+    Write-Host "• Clear user secrets: dotnet user-secrets clear --project src/Tony/Tony.csproj" -ForegroundColor Gray
 }
 catch {
     Write-Error "Setup failed: $($_.Exception.Message)"

@@ -30,7 +30,7 @@ namespace Services.Discord.SlashCommands
                 var registeredUser = await _userService.CreateUser(new User(user));
                 await FollowupAsync($"Congratulations, Tony officially recognizes you, {user.Mention}");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await FollowupAsync($"You've already been recognized.");
             }

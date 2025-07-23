@@ -1,6 +1,7 @@
 #nullable disable
 using Discord;
 using Tony.ServiceExtensions;
+using Scalar.AspNetCore;
 
 namespace Tony
 {
@@ -14,9 +15,9 @@ namespace Tony
             // Add services to the container.
             builder.Configuration.AddEnvironmentVariables();
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            // Learn more about configuring OpenAPI with Scalar at https://github.com/scalar/scalar
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddOpenApi();
             builder.Services.RegisterMongoDB(builder.Configuration);
             builder.Services.AddRepositories();
             builder.Services.AddServices();
@@ -24,11 +25,11 @@ namespace Tony
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            //if (app.Environment.IsDevelopment())
-            //{
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            //}            //}
+            if (app.Environment.IsDevelopment())
+            {
+                app.MapOpenApi();
+                app.MapScalarApiReference();
+            }
 
             //app.UseHttpsRedirection();
 

@@ -6,7 +6,7 @@ namespace Abstractions.Repositories
     {
         public Task<T> CreateAsync(T entity);
         public Task<IEnumerable<T>> CreateAsync(IEnumerable<T> entities);
-        public Task<T> GetAsync(Guid id);
+        public Task<T?> GetAsync(Guid id);
         public Task<IEnumerable<T>> GetAsync();
         public Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> query);
         public Task<T> UpdateAsync(T entity);

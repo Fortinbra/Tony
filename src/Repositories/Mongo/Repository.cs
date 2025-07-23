@@ -52,7 +52,7 @@ namespace Repositories.Mongo
             throw new NotImplementedException();
         }
 
-        public Task<T> GetAsync(Guid id)
+        public Task<T?> GetAsync(Guid id)
         {
             throw new NotImplementedException();
         }

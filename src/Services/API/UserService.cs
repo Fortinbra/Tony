@@ -23,12 +23,12 @@ namespace Services.API
             throw new InvalidOperationException("Cannot create a user twice");
         }
 
-        public Task<User> GetUser(Guid id)
+        public Task<User?> GetUser(Guid id)
         {
             return _repository.GetAsync(id);
         }
 
-        public async Task<User> GetUser(ulong id)
+        public async Task<User?> GetUser(ulong id)
         {
             return (await _repository.GetAsync(x => x.DiscordId == id)).FirstOrDefault();
         }

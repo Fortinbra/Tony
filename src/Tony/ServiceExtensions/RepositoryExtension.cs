@@ -1,7 +1,5 @@
 ﻿using Abstractions.Repositories;
 using Models;
-using Models.GitHub;
-using Models.Users;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Conventions;
@@ -59,18 +57,11 @@ namespace Tony.ServiceExtensions
                     cm.AutoMap();
                     cm.SetIgnoreExtraElements(true);
                 });
-
-                BsonClassMap.RegisterClassMap<User>(cm =>
-                {
-                    cm.AutoMap();
-                    cm.SetIgnoreExtraElements(true);
-                });
             }
         }
         public static void AddRepositories(this IServiceCollection services)
         {
-            services.AddTransient<IRepository<User>, Repository<User>>();
-            services.AddTransient<IRepository<Root>, Repository<Root>>();
+            // Repository registrations will be added here as needed
         }
     }
 }

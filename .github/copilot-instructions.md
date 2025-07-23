@@ -166,12 +166,12 @@ When reviewing code or implementing new features, ask:
 The project already demonstrates good SOLID principles:
 
 **SRP Examples:**
-- `UserService` handles only user business logic
-- `UserController` handles only HTTP requests/responses
+- `DiscordClientManager` handles only Discord client lifecycle management
+- `HealthController` handles only health check HTTP requests/responses
 - `Repository<T>` handles only data access operations
 
 **DIP Examples:**
-- Controllers depend on `IUserService` interface, not concrete implementation
+- Controllers depend on health check service interfaces, not concrete implementations
 - Services depend on `IRepository<T>` interface, not MongoDB specifics
 - All dependencies are injected through constructors
 

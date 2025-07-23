@@ -9,7 +9,7 @@ A Discord bot built with .NET 8.0, ASP.NET Core Web API, and MongoDB. Tony Bot p
 - **MongoDB Database**: Persistent data storage with MongoDB
 - **Clean Architecture**: Separated layers for maintainability and testability
 - **Slash Commands**: Modern Discord interaction patterns
-- **GitHub Integration**: Models and webhooks for GitHub events
+- **Health Monitoring**: Built-in health checks for system monitoring
 
 ## Technology Stack
 
@@ -139,16 +139,14 @@ The API uses Scalar for modern, interactive documentation. When running in devel
 The application uses MongoDB for data persistence. The repository pattern abstracts database operations, making it easy to test and maintain.
 
 ### Collections
-- **Users**: Discord user information and preferences
 - **Logs**: Application and audit logs
-- **GitHub**: GitHub webhook and event data
 
 ## Discord Bot Features
 
 Current Discord functionality includes:
 - Slash command framework
-- User management
-- Integration with GitHub webhooks
+- Interactive Discord commands (bite, color roles, yeet)
+- Health monitoring and status reporting
 - Extensible command system
 
 ## Contributing

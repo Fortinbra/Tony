@@ -78,7 +78,7 @@ try {
     if (-not $DryRun) {
         # Restore packages after updates
         Write-Host "Restoring packages..." -ForegroundColor Yellow
-        $solutionPath = Join-Path $PSScriptRoot "..\src\Tony\Tony.sln"
+        $solutionPath = Join-Path $PSScriptRoot "..\Tony.sln"
         dotnet restore $solutionPath
         
         if ($LASTEXITCODE -eq 0) {

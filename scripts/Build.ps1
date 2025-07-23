@@ -10,7 +10,7 @@ param(
 Write-Host "Starting build process for Tony Bot..." -ForegroundColor Green
 
 # Get the solution path
-$SolutionPath = Join-Path $PSScriptRoot "..\src\Tony\Tony.sln"
+$SolutionPath = Join-Path $PSScriptRoot "..\Tony.sln"
 
 if (-not (Test-Path $SolutionPath)) {
     Write-Error "Solution file not found at: $SolutionPath"

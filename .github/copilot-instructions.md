@@ -226,10 +226,10 @@ All development scripts should be written in PowerShell for Windows compatibilit
 #### Build Script Example
 ```powershell
 # Build the entire solution
-dotnet build src/Tony/Tony.sln --configuration Release
+dotnet build Tony.sln --configuration Release
 
 # Run tests if available
-dotnet test src/Tony/Tony.sln --configuration Release
+dotnet test Tony.sln --configuration Release
 
 # Note: All projects are configured with TreatWarningsAsErrors=true
 # Build will fail if any warnings are present
@@ -238,7 +238,7 @@ dotnet test src/Tony/Tony.sln --configuration Release
 #### Development Setup Script
 ```powershell
 # Restore packages
-dotnet restore src/Tony/Tony.sln
+dotnet restore Tony.sln
 
 # Set up user secrets
 dotnet user-secrets init --project src/Tony/Tony.csproj

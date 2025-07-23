@@ -8,7 +8,7 @@ param(
 Write-Host "Setting up Tony Bot development environment..." -ForegroundColor Green
 
 # Get paths
-$SolutionPath = Join-Path $PSScriptRoot "..\src\Tony\Tony.sln"
+$SolutionPath = Join-Path $PSScriptRoot "..\Tony.sln"
 $ProjectPath = Join-Path $PSScriptRoot "..\src\Tony\Tony.csproj"
 
 try {

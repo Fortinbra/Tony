@@ -22,6 +22,11 @@ namespace Tony
             builder.Services.AddRepositories();
             builder.Services.AddServices();
             builder.Services.AddDiscordBot(builder.Configuration);
+            
+            // Add health checks
+            builder.Services.AddHealthChecks()
+                .AddCheck<Services.HealthChecks.MongoHealthCheck>("mongodb")
+                .AddCheck<Services.HealthChecks.DiscordHealthCheck>("discord");
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -35,6 +40,8 @@ namespace Tony
 
             app.UseAuthorization();
 
+            // Configure health check endpoint
+            app.MapHealthChecks("/health");
 
             app.MapControllers();
 

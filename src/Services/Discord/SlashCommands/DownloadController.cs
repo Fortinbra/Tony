@@ -15,8 +15,8 @@ namespace Services.Discord.SlashCommands
 
         public DownloadController(IGitHubService gitHubService, ILogger<DownloadController> logger)
         {
-            _gitHubService = gitHubService;
-            _logger = logger;
+            _gitHubService = gitHubService ?? throw new ArgumentNullException(nameof(gitHubService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [SlashCommand("download-controller", "Download a UF2 firmware file for a GP2040-CE compatible controller")]
@@ -102,7 +102,7 @@ namespace Services.Discord.SlashCommands
 
         public ControllerAutocompleteHandler(IGitHubService gitHubService)
         {
-            _gitHubService = gitHubService;
+            _gitHubService = gitHubService ?? throw new ArgumentNullException(nameof(gitHubService));
         }
 
         public override Task<AutocompletionResult> GenerateSuggestionsAsync(

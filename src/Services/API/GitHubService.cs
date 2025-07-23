@@ -71,8 +71,8 @@ namespace Services.API
 
         public GitHubService(HttpClient httpClient, ILogger<GitHubService> logger)
         {
-            _httpClient = httpClient;
-            _logger = logger;
+            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             // Set User-Agent header required by GitHub API
             _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Tony-Bot/1.0");

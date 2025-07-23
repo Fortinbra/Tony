@@ -46,10 +46,144 @@ src/
 ### Code Standards
 - Use **nullable reference types** where appropriate
 - Follow **clean architecture** principles
+- Follow **SOLID principles** (Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion)
 - Implement **dependency injection** patterns
 - Use **async/await** for all I/O operations
 - Follow C# naming conventions and best practices
 - **All projects treat warnings as errors** - ensure code is warning-free
+
+### SOLID Principles Implementation
+
+#### Single Responsibility Principle (SRP)
+- Each class should have only one reason to change
+- Services should handle only one specific domain concern
+- Controllers should only handle HTTP requests and responses
+- Repositories should only handle data access for one entity type
+
+#### Open/Closed Principle (OCP)
+- Classes should be open for extension but closed for modification
+- Use interfaces and abstract classes for extensibility
+- Implement new features through inheritance or composition, not modification
+- Use strategy pattern for varying behaviors
+
+#### Liskov Substitution Principle (LSP)
+- Derived classes must be substitutable for their base classes
+- Implementations should honor the contracts defined by interfaces
+- Avoid strengthening preconditions or weakening postconditions in derived classes
+
+#### Interface Segregation Principle (ISP)
+- Create specific, focused interfaces rather than large, general ones
+- Clients should not depend on interfaces they don't use
+- Split large interfaces into smaller, role-specific interfaces
+- Example: `IUserRepository` vs `IUserNotificationRepository`
+
+#### Dependency Inversion Principle (DIP)
+- Depend on abstractions, not concretions
+- High-level modules should not depend on low-level modules
+- Use dependency injection to invert control
+- Register dependencies in `ServiceExtensions` classes
+
+**Example of SOLID implementation:**
+```csharp
+// Good: Follows SRP and DIP
+public interface IUserService
+{
+    Task<User?> GetUserAsync(Guid id);
+    Task<User> CreateUserAsync(User user);
+}
+
+public class UserService : IUserService
+{
+    private readonly IUserRepository _repository;
+    private readonly ILogger<UserService> _logger;
+
+    public UserService(IUserRepository repository, ILogger<UserService> logger)
+    {
+        _repository = repository;
+        _logger = logger;
+    }
+
+    public async Task<User?> GetUserAsync(Guid id)
+    {
+        _logger.LogInformation("Retrieving user with ID: {UserId}", id);
+        return await _repository.GetAsync(id);
+    }
+}
+```
+
+#### SOLID Anti-Patterns to Avoid
+
+**Violating SRP:**
+```csharp
+// Bad: Class doing too many things
+public class UserService
+{
+    public User GetUser(Guid id) { /* data access */ }
+    public void SendEmail(string email) { /* email logic */ }
+    public void LogActivity(string message) { /* logging logic */ }
+}
+
+// Good: Separate responsibilities
+public class UserService { /* only user business logic */ }
+public class EmailService { /* only email logic */ }
+public class Logger { /* only logging logic */ }
+```
+
+**Violating DIP:**
+```csharp
+// Bad: Depending on concrete implementation
+public class UserService
+{
+    private readonly MongoUserRepository _repository; // Concrete dependency
+}
+
+// Good: Depending on abstraction
+public class UserService
+{
+    private readonly IUserRepository _repository; // Abstract dependency
+}
+```
+
+#### Code Review Checklist for SOLID Principles
+
+When reviewing code or implementing new features, ask:
+
+1. **SRP**: Does this class have only one reason to change? If it handles multiple concerns, split it.
+2. **OCP**: Can I add new functionality without modifying existing code? Use interfaces and inheritance.
+3. **LSP**: Can I substitute derived classes without breaking functionality? Ensure contracts are honored.
+4. **ISP**: Does this interface force clients to depend on methods they don't use? Split large interfaces.
+5. **DIP**: Does this class depend on concrete implementations? Inject abstractions instead.
+
+**Red Flags:**
+- Classes with multiple responsibilities
+- Direct instantiation of dependencies (`new SomeService()`)
+- Large interfaces with unrelated methods
+- Tight coupling between layers
+- Violation of abstraction boundaries
+
+### Current SOLID Implementation in Tony Bot
+
+The project already demonstrates good SOLID principles:
+
+**SRP Examples:**
+- `UserService` handles only user business logic
+- `UserController` handles only HTTP requests/responses
+- `Repository<T>` handles only data access operations
+
+**DIP Examples:**
+- Controllers depend on `IUserService` interface, not concrete implementation
+- Services depend on `IRepository<T>` interface, not MongoDB specifics
+- All dependencies are injected through constructors
+
+**ISP Examples:**
+- `IUserService` is focused on user operations only
+- `IRepository<T>` provides general data access without entity-specific methods
+
+**To maintain SOLID principles when extending:**
+- Create specific service interfaces for new features
+- Use dependency injection for all external dependencies
+- Keep controllers thin - delegate to services
+- Separate concerns across different classes and layers
 
 ### When Adding New Features
 
@@ -58,18 +192,21 @@ src/
 - Implement command interfaces in `src/Abstractions/Services/`
 - Register services in `src/Tony/ServiceExtensions/DiscordExtensions.cs`
 - Use Discord.Net's interaction framework for command handling
+- **SOLID**: Each command should have a single responsibility (SRP)
 
 #### API Endpoints
 - Add controllers in `src/Tony/Controllers/`
 - Implement service interfaces in `src/Abstractions/Services/`
 - Create service implementations in `src/Services/API/`
 - Register services in `src/Tony/ServiceExtensions/ServicesExtensions.cs`
+- **SOLID**: Controllers should only handle HTTP concerns, delegate business logic to services (SRP, DIP)
 
 #### Data Models
 - Add models in appropriate `src/Models/` subdirectories
 - Implement MongoDB attributes for database mapping
 - Create repository interfaces in `src/Abstractions/Repositories/`
 - Implement repositories in `src/Repositories/Mongo/`
+- **SOLID**: Repositories should be focused on single entity types (SRP, ISP)
 
 ### Package Management
 - Always use the **latest stable versions** of packages

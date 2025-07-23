@@ -7,16 +7,13 @@ namespace Services.Discord
     public class DiscordHostedService : BackgroundService
     {
         private readonly IDiscordClientManager _clientManager;
-        private readonly IDiscordInteractionSetup _interactionSetup;
         private readonly ILogger<DiscordHostedService> _logger;
 
         public DiscordHostedService(
             IDiscordClientManager clientManager,
-            IDiscordInteractionSetup interactionSetup,
             ILogger<DiscordHostedService> logger)
         {
             _clientManager = clientManager ?? throw new ArgumentNullException(nameof(clientManager));
-            _interactionSetup = interactionSetup ?? throw new ArgumentNullException(nameof(interactionSetup));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -25,7 +22,6 @@ namespace Services.Discord
             try
             {
                 await _clientManager.StartAsync(stoppingToken);
-                await _interactionSetup.SetupInteractionsAsync();
                 
                 _logger.LogInformation("Discord hosted service started successfully");
                 

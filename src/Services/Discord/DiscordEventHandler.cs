@@ -11,22 +11,34 @@ namespace Services.Discord
     {
         private readonly InteractionService _interactionService;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IDiscordInteractionSetup _interactionSetup;
         private readonly ILogger<DiscordEventHandler> _logger;
 
         public DiscordEventHandler(
             InteractionService interactionService,
             IServiceProvider serviceProvider,
+            IDiscordInteractionSetup interactionSetup,
             ILogger<DiscordEventHandler> logger)
         {
             _interactionService = interactionService ?? throw new ArgumentNullException(nameof(interactionService));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            _interactionSetup = interactionSetup ?? throw new ArgumentNullException(nameof(interactionSetup));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task HandleReadyAsync()
         {
             _logger.LogInformation("Discord client is ready");
-            await Task.CompletedTask;
+            
+            try
+            {
+                await _interactionSetup.SetupInteractionsAsync();
+                _logger.LogInformation("Discord interactions setup completed");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to setup Discord interactions");
+            }
         }
 
         public async Task HandleInteractionCreatedAsync(SocketInteraction interaction)

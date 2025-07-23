@@ -13,12 +13,15 @@ namespace Tony.ServiceExtensions
         {
             services.AddOptions<DiscordOptions>().Configure(options =>
             {
-                options.Token = configuration["DiscordToken"];
-                options.GuildId = ulong.Parse(configuration["DiscordGuildId"] ?? "1049366310389289001");
+                options.Token = configuration["Discord:Token"];
+                options.GuildId = ulong.Parse(configuration["Discord:GuildId"] ?? "1049366310389289001");
             });
             
-            services.AddSlashCommands();
+            // Register Discord client first
             services.AddSingleton<DiscordSocketClient>();
+            
+            // Register interaction service with proper dependencies
+            services.AddSlashCommands();
             
             // Register the new SOLID-compliant services
             services.AddSingleton<IDiscordClientManager, DiscordClientManager>();
@@ -29,11 +32,12 @@ namespace Tony.ServiceExtensions
         }
         public static void AddSlashCommands(this IServiceCollection services)
         {
-            var servConfig = new InteractionServiceConfig()
+            // Register InteractionService with factory to ensure proper construction
+            services.AddSingleton<InteractionService>(provider =>
             {
-            };
-            services.AddSingleton(servConfig);
-            services.AddSingleton<InteractionService>();
+                var client = provider.GetRequiredService<DiscordSocketClient>();
+                return new InteractionService(client);
+            });
 
             services.AddSingleton<Bite>();
         }

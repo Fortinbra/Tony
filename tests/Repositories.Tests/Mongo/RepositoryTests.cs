@@ -25,6 +25,7 @@ namespace Repositories.Tests.Mongo
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public void Constructor_WithValidDatabase_InitializesSuccessfully()
         {
             // Act & Assert - Constructor should complete without exception
@@ -33,6 +34,7 @@ namespace Repositories.Tests.Mongo
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task CreateAsync_WithValidEntity_CallsInsertOneAsync()
         {
             // Arrange
@@ -46,6 +48,7 @@ namespace Repositories.Tests.Mongo
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task UpdateAsync_WithValidEntity_CallsReplaceOneAsync()
         {
             // Arrange
@@ -63,6 +66,7 @@ namespace Repositories.Tests.Mongo
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task DeleteAsync_WithValidId_CallsDeleteOneAsync()
         {
             // Arrange

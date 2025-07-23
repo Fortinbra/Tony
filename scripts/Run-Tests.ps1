@@ -5,7 +5,9 @@ param(
     [string]$Configuration = "Debug",
     [switch]$Coverage = $false,
     [switch]$Verbose = $false,
-    [switch]$Watch = $false
+    [switch]$Watch = $false,
+    [ValidateSet("All", "Unit", "Integration", "E2E", "Performance", "Smoke")]
+    [string]$Category = "All"
 )
 
 Write-Host "🧪 Tony Bot Test Runner" -ForegroundColor Cyan
@@ -18,6 +20,13 @@ try {
 } catch {
     Write-Host "❌ .NET SDK not found. Please install .NET 10 or later." -ForegroundColor Red
     exit 1
+}
+
+# Display test category info
+if ($Category -ne "All") {
+    Write-Host "🏷️  Running $Category tests only" -ForegroundColor Magenta
+} else {
+    Write-Host "🏷️  Running all test categories" -ForegroundColor Magenta
 }
 
 # Restore packages
@@ -47,6 +56,25 @@ $testArgs = @(
     "--logger", "console;verbosity=normal"
 )
 
+# Select appropriate run settings file based on category
+$runSettingsFile = switch ($Category) {
+    "Unit" { "tests.unit.runsettings" }
+    "Integration" { "tests.integration.runsettings" }
+    "E2E" { "tests.e2e.runsettings" }
+    default { "tests.runsettings" }
+}
+
+if (Test-Path $runSettingsFile) {
+    $testArgs += "--settings", $runSettingsFile
+} else {
+    Write-Host "⚠️  Run settings file '$runSettingsFile' not found, using default settings" -ForegroundColor Yellow
+}
+
+# Add filter for specific test categories (when not using dedicated run settings)
+if ($Category -ne "All" -and -not (Test-Path $runSettingsFile)) {
+    $testArgs += "--filter", "Category=$Category"
+}
+
 if ($Verbose) {
     $testArgs += "--verbosity", "normal"
 }
@@ -65,8 +93,7 @@ if ($Coverage) {
     
     $testArgs += @(
         "--results-directory", "TestResults",
-        "--collect:XPlat Code Coverage",
-        "--settings", "tests.runsettings"
+        "--collect:XPlat Code Coverage"
     )
     
     # Run tests
@@ -140,6 +167,18 @@ Get-ChildItem -Path "tests" -Filter "*.csproj" -Recurse | ForEach-Object {
     Write-Host "   • $projectName" -ForegroundColor White
 }
 
-Write-Host "`n🏁 Testing completed!" -ForegroundColor Cyan
+Write-Host "`n�️  Test Categories:" -ForegroundColor Cyan
+Write-Host "   • Unit - Fast running isolated component tests" -ForegroundColor White
+Write-Host "   • Integration - Multi-component interaction tests" -ForegroundColor White  
+Write-Host "   • E2E - End-to-end system tests" -ForegroundColor White
+Write-Host "   • Performance - Performance measurement tests" -ForegroundColor White
+Write-Host "   • Smoke - Basic functionality verification tests" -ForegroundColor White
+
+Write-Host "`n💡 Usage Examples:" -ForegroundColor Cyan
+Write-Host "   .\Run-Tests.ps1 -Category Unit" -ForegroundColor White
+Write-Host "   .\Run-Tests.ps1 -Category Integration -Coverage" -ForegroundColor White
+Write-Host "   .\Run-Tests.ps1 -Category E2E -Verbose" -ForegroundColor White
+
+Write-Host "`n�🏁 Testing completed!" -ForegroundColor Cyan
 
 exit $testResult

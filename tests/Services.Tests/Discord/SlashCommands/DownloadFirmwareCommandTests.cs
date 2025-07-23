@@ -22,6 +22,7 @@ namespace Services.Tests.Discord.SlashCommands
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public void Constructor_WithValidDependencies_InitializesSuccessfully()
         {
             // Act & Assert
@@ -29,6 +30,7 @@ namespace Services.Tests.Discord.SlashCommands
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public void Constructor_WithNullGitHubService_ThrowsArgumentNullException()
         {
             // Act & Assert
@@ -37,6 +39,7 @@ namespace Services.Tests.Discord.SlashCommands
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public void Constructor_WithNullLogger_ThrowsArgumentNullException()
         {
             // Act & Assert
@@ -45,6 +48,7 @@ namespace Services.Tests.Discord.SlashCommands
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public void DownloadFirmwareCommand_HasCorrectSlashCommandAttribute()
         {
             // Arrange
@@ -61,6 +65,7 @@ namespace Services.Tests.Discord.SlashCommands
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public void GetAvailableControllers_ReturnsControllerList()
         {
             // Arrange

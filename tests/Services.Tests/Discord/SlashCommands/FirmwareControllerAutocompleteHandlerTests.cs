@@ -17,6 +17,7 @@ namespace Services.Tests.Discord.SlashCommands
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public void Constructor_WithValidGitHubService_InitializesSuccessfully()
         {
             // Act & Assert
@@ -24,6 +25,7 @@ namespace Services.Tests.Discord.SlashCommands
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public void Constructor_WithNullGitHubService_ThrowsArgumentNullException()
         {
             // Act & Assert

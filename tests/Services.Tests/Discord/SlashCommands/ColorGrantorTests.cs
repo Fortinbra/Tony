@@ -14,6 +14,7 @@ namespace Services.Tests.Discord.SlashCommands
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public void Constructor_InitializesSuccessfully()
         {
             // Act & Assert
@@ -21,6 +22,7 @@ namespace Services.Tests.Discord.SlashCommands
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public void GrantColorCommand_HasCorrectSlashCommandAttribute()
         {
             // Arrange

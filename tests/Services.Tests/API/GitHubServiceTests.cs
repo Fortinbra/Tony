@@ -25,6 +25,7 @@ namespace Services.Tests.API
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task GetControllerUF2UrlAsync_WithValidController_ReturnsDownloadUrl()
         {
             // Arrange
@@ -67,6 +68,7 @@ namespace Services.Tests.API
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task GetControllerUF2UrlAsync_WithInvalidController_ReturnsNull()
         {
             // Arrange
@@ -107,6 +109,7 @@ namespace Services.Tests.API
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task GetControllerUF2UrlAsync_WhenHttpRequestFails_ReturnsNull()
         {
             // Arrange
@@ -131,6 +134,7 @@ namespace Services.Tests.API
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task GetControllerUF2UrlAsync_WhenExceptionThrown_ReturnsNull()
         {
             // Arrange
@@ -153,6 +157,7 @@ namespace Services.Tests.API
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task GetControllerUF2UrlAsync_WithNullAssets_ReturnsNull()
         {
             // Arrange
@@ -186,6 +191,7 @@ namespace Services.Tests.API
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public void GetAvailableControllers_ReturnsAllControllers()
         {
             // Act
@@ -242,6 +248,7 @@ namespace Services.Tests.API
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public void Constructor_WithNullHttpClient_ThrowsArgumentNullException()
         {
             // Act & Assert
@@ -250,6 +257,7 @@ namespace Services.Tests.API
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public void Constructor_WithNullLogger_ThrowsArgumentNullException()
         {
             // Act & Assert
@@ -258,6 +266,7 @@ namespace Services.Tests.API
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public void Constructor_SetsUserAgentHeader()
         {
             // Arrange & Act

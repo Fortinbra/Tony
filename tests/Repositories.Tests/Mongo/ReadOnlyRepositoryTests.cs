@@ -25,6 +25,7 @@ namespace Repositories.Tests.Mongo
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public void Constructor_WithValidDatabase_InitializesSuccessfully()
         {
             // Act & Assert - Constructor should complete without exception
@@ -33,6 +34,7 @@ namespace Repositories.Tests.Mongo
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task GetAsync_WithValidId_ReturnsEntity()
         {
             // Arrange
@@ -60,6 +62,7 @@ namespace Repositories.Tests.Mongo
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task GetAsync_WithInvalidId_ReturnsNull()
         {
             // Arrange
@@ -84,6 +87,7 @@ namespace Repositories.Tests.Mongo
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task GetAsync_ReturnsAllEntities()
         {
             // Arrange
@@ -115,6 +119,7 @@ namespace Repositories.Tests.Mongo
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task GetAsync_WithPredicate_ReturnsMatchingEntities()
         {
             // Arrange

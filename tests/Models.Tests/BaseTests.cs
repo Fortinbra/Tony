@@ -7,6 +7,7 @@ namespace Models.Tests
     public class BaseTests
     {
         [Fact]
+        [Trait("Category", "Unit")]
         public void Base_Constructor_SetsIdToNewGuid()
         {
             // Act
@@ -17,6 +18,7 @@ namespace Models.Tests
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public void Base_MultipleInstances_HaveUniqueIds()
         {
             // Act
@@ -28,6 +30,7 @@ namespace Models.Tests
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public void Base_Id_CanBeSetToSpecificValue()
         {
             // Arrange
@@ -42,6 +45,7 @@ namespace Models.Tests
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public void Base_Id_HasBsonIdAttribute()
         {
             // Arrange

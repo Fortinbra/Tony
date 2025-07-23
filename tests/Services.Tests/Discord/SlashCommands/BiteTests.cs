@@ -15,6 +15,7 @@ namespace Services.Tests.Discord.SlashCommands
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public void Constructor_InitializesSuccessfully()
         {
             // Act & Assert
@@ -22,6 +23,7 @@ namespace Services.Tests.Discord.SlashCommands
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public void BiteCommand_HasCorrectSlashCommandAttribute()
         {
             // Arrange
@@ -38,6 +40,7 @@ namespace Services.Tests.Discord.SlashCommands
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public void BiteAsync_HasRequiredUserParameter()
         {
             // Arrange

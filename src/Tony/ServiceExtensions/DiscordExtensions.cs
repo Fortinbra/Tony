@@ -40,6 +40,7 @@ namespace Tony.ServiceExtensions
             });
 
             services.AddSingleton<Bite>();
+            services.AddSingleton<DownloadController>();
         }
     }
 }

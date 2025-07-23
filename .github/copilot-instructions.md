@@ -54,6 +54,7 @@ src/
 - Follow C# naming conventions and best practices
 - **All projects treat warnings as errors** - ensure code is warning-free
 - **Follow Test-Driven Development (TDD)** - write tests first, then implement functionality
+- **One class per file** - each .cs file should contain only one class for better maintainability and clarity
 
 ### Test-Driven Development (TDD) Guidelines
 

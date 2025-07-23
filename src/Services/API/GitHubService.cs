@@ -103,7 +103,9 @@ namespace Services.API
                 }
 
                 // Look for the UF2 file for the specified controller
-                var expectedFileName = $"GP2040-CE_{tag}_{controllerName}.uf2";
+                // Remove the 'v' prefix from tag to match the actual filename format
+                var versionNumber = tag.StartsWith("v", StringComparison.OrdinalIgnoreCase) ? tag[1..] : tag;
+                var expectedFileName = $"GP2040-CE_{versionNumber}_{controllerName}.uf2";
                 var asset = release.Assets.FirstOrDefault(a => 
                     string.Equals(a.Name, expectedFileName, StringComparison.OrdinalIgnoreCase));
 

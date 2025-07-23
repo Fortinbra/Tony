@@ -30,7 +30,8 @@ namespace Services.Tests.API
             // Arrange
             var controllerName = "Pico";
             var tag = "v0.7.11";
-            var expectedUrl = $"https://github.com/OpenStickCommunity/GP2040-CE/releases/download/{tag}/GP2040-CE_{tag}_{controllerName}.uf2";
+            var versionNumber = "0.7.11"; // GitHub assets use version without 'v' prefix
+            var expectedUrl = $"https://github.com/OpenStickCommunity/GP2040-CE/releases/download/{tag}/GP2040-CE_{versionNumber}_{controllerName}.uf2";
 
             var mockRelease = new GitHubRelease
             {
@@ -38,7 +39,7 @@ namespace Services.Tests.API
                 {
                     new() 
                     { 
-                        Name = $"GP2040-CE_{tag}_{controllerName}.uf2",
+                        Name = $"GP2040-CE_{versionNumber}_{controllerName}.uf2",
                         BrowserDownloadUrl = expectedUrl
                     }
                 }
@@ -78,7 +79,7 @@ namespace Services.Tests.API
                 {
                     new() 
                     { 
-                        Name = "GP2040-CE_v0.7.11_Pico.uf2",
+                        Name = "GP2040-CE_0.7.11_Pico.uf2", // Use actual GitHub asset filename format
                         BrowserDownloadUrl = "https://example.com/file.uf2"
                     }
                 }
@@ -196,6 +197,48 @@ namespace Services.Tests.API
             Assert.Contains("Pico", result);
             Assert.Contains("ARCController", result);
             Assert.Contains("FlatboxRev5", result);
+        }
+
+        [Theory]
+        [InlineData("v0.7.11", "0.7.11")] // Version with 'v' prefix
+        [InlineData("0.7.11", "0.7.11")]  // Version without 'v' prefix
+        public async Task GetControllerUF2UrlAsync_HandlesVersionFormatsCorrectly(string inputTag, string expectedVersionInFilename)
+        {
+            // Arrange
+            var controllerName = "Pico";
+            var expectedUrl = $"https://github.com/OpenStickCommunity/GP2040-CE/releases/download/{inputTag}/GP2040-CE_{expectedVersionInFilename}_{controllerName}.uf2";
+
+            var mockRelease = new GitHubRelease
+            {
+                Assets = new List<GitHubReleaseAsset>
+                {
+                    new() 
+                    { 
+                        Name = $"GP2040-CE_{expectedVersionInFilename}_{controllerName}.uf2",
+                        BrowserDownloadUrl = expectedUrl
+                    }
+                }
+            };
+
+            var jsonContent = JsonSerializer.Serialize(mockRelease);
+            var httpResponse = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(jsonContent)
+            };
+
+            _mockHttpMessageHandler
+                .Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.IsAny<HttpRequestMessage>(),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(httpResponse);
+
+            // Act
+            var result = await _gitHubService.GetControllerUF2UrlAsync(controllerName, inputTag);
+
+            // Assert
+            Assert.Equal(expectedUrl, result);
         }
 
         [Fact]

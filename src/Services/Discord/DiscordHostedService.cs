@@ -1,66 +1,53 @@
-﻿using Abstractions.Repositories;
-using Discord;
-using Discord.Interactions;
-using Discord.Net;
-using Discord.WebSocket;
+﻿using Abstractions.Services;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
-using Models;
-using Models.Users;
-using Newtonsoft.Json;
-using System.Reflection;
+using Microsoft.Extensions.Logging;
 
 namespace Services.Discord
 {
     public class DiscordHostedService : BackgroundService
     {
-        private readonly IRepository<User> _userRepo;
-        private readonly DiscordSocketClient _client;
-        private readonly string BotToken;
-        private readonly InteractionService _interactionService;
-        private readonly IServiceProvider _serviceProvider;
-        public DiscordHostedService(IRepository<User> userRepo, DiscordSocketClient client, IOptions<DiscordOptions> options, InteractionService interactionService, IServiceProvider serviceProvider)
+        private readonly IDiscordClientManager _clientManager;
+        private readonly IDiscordInteractionSetup _interactionSetup;
+        private readonly ILogger<DiscordHostedService> _logger;
+
+        public DiscordHostedService(
+            IDiscordClientManager clientManager,
+            IDiscordInteractionSetup interactionSetup,
+            ILogger<DiscordHostedService> logger)
         {
-            _userRepo = userRepo ?? throw new ArgumentNullException(nameof(userRepo));
-            _client = client ?? throw new ArgumentNullException(nameof(client));
-            _interactionService = interactionService ?? throw new ArgumentNullException(nameof(interactionService));
-            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(_serviceProvider));
-            BotToken = options.Value.Token;
+            _clientManager = clientManager ?? throw new ArgumentNullException(nameof(clientManager));
+            _interactionSetup = interactionSetup ?? throw new ArgumentNullException(nameof(interactionSetup));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _client.Log += async (msg) =>
+            try
             {
-                await Task.CompletedTask;
-                Console.WriteLine(msg);
-            };
-            _client.Ready += async () =>
+                await _clientManager.StartAsync(stoppingToken);
+                await _interactionSetup.SetupInteractionsAsync();
+                
+                _logger.LogInformation("Discord hosted service started successfully");
+                
+                // Keep the service running until cancellation is requested
+                await Task.Delay(Timeout.Infinite, stoppingToken);
+            }
+            catch (OperationCanceledException)
             {
-                await Task.CompletedTask;
-                Console.WriteLine("Ready!");
-                await _interactionService.AddModulesAsync(Assembly.GetExecutingAssembly(), _serviceProvider);
-#if DEBUG
-                await _interactionService.RegisterCommandsToGuildAsync(1049366310389289001);
-#else
-                await _interactionService.RegisterCommandsGloballyAsync();
-#endif
-            };
-            _client.InteractionCreated += async (x) =>
+                _logger.LogInformation("Discord hosted service is stopping");
+            }
+            catch (Exception ex)
             {
-                var ctx = new SocketInteractionContext(_client, x);
-                await _interactionService.ExecuteCommandAsync(ctx, _serviceProvider);
-            };
-
-
-            await _client.LoginAsync(TokenType.Bot, BotToken);
-
-            await _client.StartAsync();
-
+                _logger.LogError(ex, "Discord hosted service encountered an error");
+                throw;
+            }
         }
-        public override Task StopAsync(CancellationToken cancellationToken)
+
+        public override async Task StopAsync(CancellationToken cancellationToken)
         {
-            return base.StopAsync(cancellationToken);
+            _logger.LogInformation("Discord hosted service is stopping");
+            await _clientManager.StopAsync(cancellationToken);
+            await base.StopAsync(cancellationToken);
         }
     }
 }

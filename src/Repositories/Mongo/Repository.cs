@@ -1,34 +1,28 @@
 ﻿using Abstractions.Repositories;
 using Models;
 using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Repositories.Mongo
 {
-    public class Repository<T> : IRepository<T>
+    public class Repository<T> : ReadOnlyRepository<T>, IRepository<T>
         where T : Base
     {
-        private readonly IMongoCollection<T> _collection;
-        public Repository(IMongoDatabase mongoDb)
+        public Repository(IMongoDatabase mongoDb) : base(mongoDb)
         {
-            _collection = mongoDb.GetCollection<T>($"{typeof(T).Name}");
-        }
-        public IQueryable<T> AsQueryable()
-        {
-            return _collection.AsQueryable();
         }
 
-        public Task<T> CreateAsync(T entity)
+        public IQueryable<T> AsQueryable()
+        {
+            return Collection.AsQueryable();
+        }
+
+        public async Task<T> CreateAsync(T entity)
         {
             try
             {
-                _collection.InsertOne(entity);
-                return Task.FromResult(entity);
+                await Collection.InsertOneAsync(entity);
+                return entity;
             }
             catch (Exception ex)
             {
@@ -37,45 +31,81 @@ namespace Repositories.Mongo
             }
         }
 
-        public Task<IEnumerable<T>> CreateAsync(IEnumerable<T> entities)
+        public async Task<IEnumerable<T>> CreateAsync(IEnumerable<T> entities)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var entitiesList = entities.ToList();
+                await Collection.InsertManyAsync(entitiesList);
+                return entitiesList;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
         }
 
-        public Task<bool> DeleteAsync(Guid id)
+        public async Task<T> UpdateAsync(T entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await Collection.ReplaceOneAsync(x => x.Id == entity.Id, entity);
+                return entity;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
         }
 
-        public Task<(bool Success, int Count)> DeleteAsync(Expression<Func<T, bool>> query)
+        public async Task<IEnumerable<T>> UpdateAsync(IEnumerable<T> entities)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var entitiesList = entities.ToList();
+                var bulkOps = entitiesList.Select(entity => 
+                    new ReplaceOneModel<T>(
+                        Builders<T>.Filter.Eq(x => x.Id, entity.Id), 
+                        entity));
+                
+                await Collection.BulkWriteAsync(bulkOps);
+                return entitiesList;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
         }
 
-        public Task<T?> GetAsync(Guid id)
+        public async Task<bool> DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var result = await Collection.DeleteOneAsync(x => x.Id == id);
+                return result.DeletedCount > 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
         }
 
-        public async Task<IEnumerable<T>> GetAsync()
+        public async Task<(bool Success, int Count)> DeleteAsync(Expression<Func<T, bool>> query)
         {
-
-            return await _collection.Find(_ => true).ToListAsync();
-        }
-
-        public async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> query)
-        {
-            return await _collection.Find(query).ToListAsync();
-        }
-
-        public Task<T> UpdateAsync(T entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<T>> UpdateAsync(IEnumerable<T> entities)
-        {
-            throw new NotImplementedException();
+            try
+            {
+                var result = await Collection.DeleteManyAsync(query);
+                return (result.DeletedCount > 0, (int)result.DeletedCount);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
         }
     }
 }
